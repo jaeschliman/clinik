@@ -1,0 +1,85 @@
+* clinik
+
+  Common Lisp Including Nikodemus-style Nicknames
+  
+  The (main) aim of this project is simple:
+
+  I'd like to able to write some Common Lisp libraries using
+  package-local nicknames that I'm confident can run on the major
+  open-source CL implementations: CCL, SBCL, ABCL, and (eventually)
+  ECL.
+  
+
+  The (practical) aim of this project is twofold:
+
+** provide a working specification and test-suite for nikodemus-style nicknames
+
+   as far as I know, they are currently implemented in SBCL and ABCL,
+   tho still somewhat ad-hoc. browsing through SBCL's commit history
+   some weeks(?) ago, I found there was some effort to further specify
+   things like what exceptions should be thrown etc. let this repo
+   help collect specifics about this kind of thing.
+
+   TODO: provide links to relevant SBCL commits.
+   
+
+** implement them for CCL
+
+   I've already made some progress in this area, in particular, adding
+   an extra slot to the primitive package object in CCL turned out to
+   be pretty easy. Requires adding an extra field to the structure
+   definition, a value of target-nil in x-load for the package dumps,
+   and an additional argument in the internal make-package
+   function. after that, x-load rebuild followed by a full rebuild
+   will provide an image where all packages have the additional slot
+   (I forget the exact incantation. That's part of why I'm putting
+   this up here.)
+
+   Integrating the expected behavior (certain package nicknames are
+   reserved, what order are things looked up in etc) has yet to be
+   done. As noted below, the real tricky part is ensuring integration
+   with CCL's existing package-name-lookup caching, without incurring
+   large performance hits, or annoyingly large source changes.
+
+   I think the real next step will just be collecting some kind of
+   executable spec on how exactly this feature should work, to be run
+   against SBCL and ABCL, and then go ahead and implement for CCL.
+   
+   
+*** Issues:
+
+   1. I'm not paid to work in Common Lisp. So my time/expertise is pretty limited :/
+      So, I've decided to start working on this in public, with the hope
+      that interested folks will collaborate, and we can eventually provide a
+      satisfactory patch to the CCL maintainers.
+      
+   2. When I brought up adding this feature to CCL, The maintainers expressed some reluctance.
+
+      TODO: provide links to gmane discussion on openmcl list
+      
+      - CCL has some caching optimizations around package lookup, which Mr. Byers indicates
+        were added to satisfy a client who found that package lookup was consuming a significant
+        portion of their application's runtime. This is with global package names! So any
+        modification of the CCL package system will have to integrate with their optimizations,
+        and produce as small of a performance hit as possible in the typical case.
+        
+      - It was also expressed in this discussion that this feature (package-local-nicknames)
+        may not be good enough -- I understand this -- the last thing anyone wants is a bunch
+        of hacks piling up in an implementation they're maintaining. In the mailing list
+        discussion it was proposed to add a special metaclass for non-standard package types
+        and then provide the needed specialization via some CLOS methods on package lookup.
+        I don't have the chops to provide this implementation for CCL currently, but of course
+        would love to see it done. Most CL implementations I'm aware of currently have some
+        extensions to the package system defined in the CL standard (most commonly package
+        locks), and I sympathize with a maintainer wishing to have a better general solution
+        than just more special-case hacks for their implementation. (CCL includes a package
+        intern hook in addition to the relatively common package locking feature, which is
+        used by their (excellent) objective-c bridge.)
+
+        
+        
+
+   
+   
+
+   

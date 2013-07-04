@@ -68,8 +68,9 @@
         of hacks piling up in an implementation they're maintaining. In the mailing list
         discussion it was proposed to add a special metaclass for non-standard package types
         and then provide the needed specialization via some CLOS methods on package lookup.
-        I don't have the chops to provide this implementation for CCL currently, but of course
-        would love to see it done. Most CL implementations I'm aware of currently have some
+        I don't have the chops to provide this implementation for CCL in assembly (which is
+		how these internal low-level details are usually handled), but of course would love
+		to see it done. Most CL implementations I'm aware of currently have some
         extensions to the package system defined in the CL standard (most commonly package
         locks), and I sympathize with a maintainer wishing to have a better general solution
         than just more special-case hacks for their implementation. (CCL includes a package

@@ -1,0 +1,96 @@
+
+
+* https://github.com/sbcl/sbcl/commit/b0b221088b889b6d3ae67e551b93fe1a6cfec878
+** commit message:
+  package local nicknames
+  
+Example terminal session using Linedit:
+
+    * (defpackage :foo (:use :cl) (:local-nicknames (:sb :sb-ext)))
+
+    #<PACKAGE "FOO">
+    * (in-package :foo)
+
+    #<PACKAGE "FOO">
+    * (sb:posix-
+    sb:posix-environ  sb:posix-getenv
+    * (sb:posix-getenv "USER")
+
+    "nikodemus"
+
+  API:
+
+    function PACKAGE-LOCAL-NICKNAMES package
+    function PACKAGE-LOCALLY-NICKNAMED-BY package
+    function ADD-PACKAGE-LOCAL-NICKNAME nick global &optional package
+    function REMOVE-PACKAGE-LOCAL-NICKNAME old-nick &optional package
+
+    DEFPACKAGE option: (:local-nicknames {(local-nick global-name)}*)
+
+    :PACKAGE-LOCAL-NICKNAMES in *FEATURES*
+
+  Design issues and considerations:
+
+   * "CL", "COMMON-LISP", and "KEYWORD" signal a continuable error
+     when used as local nicknames. I think this is good for sanity,
+     but not strictly required. Because of the way (find-package
+     :keyword) is idiomatically used to guarantee print/read
+     consistency across packages, I think it at least should be
+     protected.
+
+   * To preserve read/print consistency, we use package local nicknames
+     as prefixes when printing.
+
+   * The hook into FIND-PACKAGE is invisible, but built on top of
+     FIND-PACKAGE-USING-PACKAGE -- undocumented and unexported, but
+     waiting to be turned into something interesting by Christophe.
+
+   * Local nicknames are protected by package locks.
+
+   * If you want to bypass nicknames, you need to first get into
+     a known package without nicknames. There could be an explicit
+     way as well, but not sure if that's needed or a good idea.
+
+  Random crap mixed in:
+
+     Re-order DEFPACKAGE option docs in rough order of usefulness.
+** notes:
+* https://github.com/sbcl/sbcl/commit/098f53bae55186b7b0b1cdc82f1ec0abbe6c97e7
+** commit message:
+  oops, it's :package-local-nicknams, not :local-nicknames
+Also mention it in the manual.
+
+  ...just couldn't get it right the first time.
+** notes:
+* https://github.com/sbcl/sbcl/commit/f1e41363fc77b7fc7da410eafef587b683be777a
+** commit message:
+suffix PACKAGE-LOCALLY-NICKNAMED-BY with -LIST
+Less confusing, and more in line with PACKAGED-NICKNAMED-BY-LIST &co.
+
+  (Thanks to Rudi Schlatte for heads-up.)
+** notes:
+* https://github.com/sbcl/sbcl/commit/506af5859d361f5e9744ca9a177bf47746333df3
+** commit message:
+prohibit adding name of a package to itself as a local nickname
+Seems useless, confusing, and probably unintentional. Make it a
+  continuable error, though. Thanks to Rudi Schlatte for thinking
+  about this.
+
+  So, NO MORE:
+
+   (in-package :foo)
+   (add-package-local-nickname :foo :bar)
+   'foo::x ; => BAR::X
+** notes:
+* https://github.com/sbcl/sbcl/commit/805689ba3c0ee4e42dbeef9b7bfd320e236813ca
+** commit message:
+Better errors for package operations.
+Add some missing errors, make other errors to be of type
+sb-kernel:simple-package-error.
+
+Fixes lp#1154776.
+
+DELETE-PACKAGE should be signalling a continuable error, but wasn't
+since 1.0.37.44.
+ 
+** notes:

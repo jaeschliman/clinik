@@ -25,11 +25,13 @@
    
    TODO: provide links to gmane discussion on openmcl list
    
-      - CCL has some caching optimizations around package lookup, which Mr. Byers indicates
-        were added to satisfy a client who found that package lookup was consuming a significant
-        portion of their application's runtime. This is with global package names! So any
-        modification of the CCL package system will have to integrate with their optimizations,
-        and produce as small of a performance hit as possible in the typical case.
+      - CCL has some caching optimizations around package lookup,
+        which Mr. Byers indicates were added to satisfy a client who
+        found that package lookup was consuming a significant portion
+        of their application's runtime. This is with global package
+        names! So any modification of the CCL package system will have
+        to integrate with their optimizations, and produce as small of
+        a performance hit as possible in the typical case.
         
       - It was also expressed in this discussion that this feature
         (package-local-nicknames) may not be good enough by itself. In

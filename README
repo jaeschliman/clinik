@@ -1,0 +1,46 @@
+ -*- mode: org -*-
+ 
+* Common Lisp Including Nikodemus-style Nicknames
+  
+  The (main) aim of this project is simple:
+  
+  I'd like to able to write some Common Lisp libraries using
+  package-local nicknames that I'm confident can run on the major
+  open-source CL implementations: CCL, SBCL, ABCL, and (eventually)
+  ECL. SBCL and ABCL already have this feature.
+  
+  
+  The (practical) aim of this project is twofold:
+  
+** provide a working specification and test-suite for nikodemus-style nicknames
+   
+   as far as I know, they are currently implemented in SBCL and ABCL,
+   though still somewhat experimental. I've collected links to some
+   relevant SBCL commits, still need to do so for ABCL, and write up a
+   test suite/working spec.
+   
+** implement them for CCL
+   
+   When I brought up adding this feature to CCL, The maintainers expressed some reluctance.
+   
+   TODO: provide links to gmane discussion on openmcl list
+   
+      - CCL has some caching optimizations around package lookup, which Mr. Byers indicates
+        were added to satisfy a client who found that package lookup was consuming a significant
+        portion of their application's runtime. This is with global package names! So any
+        modification of the CCL package system will have to integrate with their optimizations,
+        and produce as small of a performance hit as possible in the typical case.
+        
+      - It was also expressed in this discussion that this feature
+        (package-local-nicknames) may not be good enough by itself. In
+        the mailing list discussion it was proposed to add a special
+        metaclass for non-standard package types and then provide the
+        needed specialization via some CLOS methods on package lookup.
+        
+        
+   
+   
+   
+   
+   
+   

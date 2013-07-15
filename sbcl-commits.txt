@@ -1,4 +1,4 @@
-
+ -*- mode: org -*-
 
 * https://github.com/sbcl/sbcl/commit/b0b221088b889b6d3ae67e551b93fe1a6cfec878
 ** commit message:

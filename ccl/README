@@ -1,0 +1,34 @@
+ -*- mode: org -*-
+
+working towards user-subclassable packages in ccl.
+
+v0 and v1 work by appending a few new slots to the primitive package
+types, and installing a function in the primitive class table.
+
+v1 includes the basic api for local nicknames, but is unintegrated
+with ccl as yet, and basic support for class redefinition and
+obsoleting instances, via tweaking the built-in standard instance
+functions where appropriate (too invasive in my opinion)
+
+v2 (not yet written) thinking similar to v1, however it could be
+possible to change the layout of package objects so that they have the
+same layout as standard-objects with the additional package fields
+appended, instead of the other way around. should then allow reuse of
+the standard-object machinery without having to touch internals of
+slot-value etc. requires slightly trickier bootstrapping.
+
+additional thoughts:
+
+in v1. local nickname support is limited to subclasses of package, not
+allowed for built-in packages. this seems a bit silly in retrospect,
+as local-lookup is done in an alist, so checking for nil there would
+probably be just about the same as checking for whether the package is
+a 'standard-package' or not, so it would make sense to remove that
+restriction in v2. more important will be to integrate sensibly with
+the inline package-name caches, so that in the case where the alist
+/is/ nil, can just use the cached value.  hopefully that will provide
+satisfactory performance.
+
+eventually this should be presented as a set of patches and build instructions
+with a test suite.
+

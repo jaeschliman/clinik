@@ -31,16 +31,16 @@ fields at the end: the new class, and some slot storage"
            nil
            (make-read-write-lock)
            nil
-		   ;; the two new slots
-		   class extra))
+           ;; the two new slots
+           class extra))
 
 ;; new class lookup function for packages.
 ;; very hacky. just check if the uvsize is
 ;; the old size, or return our new class object
 (defun jsn-class-of-pkg (p)
   (if (= (uvsize p) 8)
-	  #.(find-class 'package)
-	  (uvref p 8)))
+      #.(find-class 'package)
+      (uvref p 8)))
 
 ;; install the hacky function in ccl's primitive
 ;; class-table.
@@ -53,9 +53,9 @@ fields at the end: the new class, and some slot storage"
 ;; table. (previously there was just a class object)
 (defun jsn-install-pkg-class-fn ()
   (let ((ofs (type-keyword-code :package)))
-	(setf (svref *class-table* ofs)
-		  #'jsn-class-of-pkg)
-	))
+    (setf (svref *class-table* ofs)
+          #'jsn-class-of-pkg)
+    ))
 
 (defclass jsn-pkg-metaclass (standard-class) ())
 
@@ -89,10 +89,10 @@ fields at the end: the new class, and some slot storage"
 ;; is a bit out of place. could just move it down...
 (defmethod allocate-instance ((this jsn-pkg-metaclass) &rest args)
   (jsn-alloc-pkg (string (or (getf args :name)
-							 (gensym "anonymous")))
-				 this ;; the class
-				 (list) ;; should eventually be a slot vector ?
-				 ))
+                             (gensym "anonymous")))
+                 this ;; the class
+                 (list) ;; should eventually be a slot vector ?
+                 ))
 
 ;; declare that we need a keyword argument :name to make-instance,
 ;; (though it's actually used in allocate instance for now)
@@ -106,7 +106,7 @@ fields at the end: the new class, and some slot storage"
 ;; so we can see our instances properly.
 (defmethod print-object ((a jsn-pkg-class) stream)
   (print-unreadable-object (a stream :type t)
-	(prin1 (package-name a) stream)))
+    (prin1 (package-name a) stream)))
 
 ;; hacky hideous plist as a slot vector, so we can
 ;; use slots in our new class.
@@ -114,16 +114,19 @@ fields at the end: the new class, and some slot storage"
   (uvref jsn-pkg 9))
 
 (defmethod slot-value-using-class ((meta jsn-pkg-metaclass)
-								   (pkg  jsn-pkg-class)
-								   slotd)
+                                   (pkg  jsn-pkg-class)
+                                   slotd)
   (let ((slots (jsn-pkg-slot-list pkg))
-		(name  (slot-definition-name slotd)))
-	(getf slots name)))
+        (name  (slot-definition-name slotd)))
+    (getf slots name)))
 
 (defmethod (setf slot-value-using-class) (value
-										  (meta jsn-pkg-metaclass)
-										  (pkg  jsn-pkg-class)
-										  slotd)
+                                          (meta jsn-pkg-metaclass)
+                                          (pkg  jsn-pkg-class)
+                                          slotd)
   (let ((name  (slot-definition-name slotd)))
-	(setf (getf (uvref pkg 9) name) value)))
+    (setf (getf (uvref pkg 9) name) value)))
 
+;;; don't actually obsolete instances.
+(defmethod make-instances-obsolete ((class jsn-pkg-metaclass))
+  class)

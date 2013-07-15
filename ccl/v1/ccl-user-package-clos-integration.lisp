@@ -108,16 +108,10 @@
                           :expected-type  (slot-definition-type slotd)
                           :initarg-name (car foundp)))
                  (setf (slot-value-using-class class instance slotd) new-value))
-                ((and (or t (eq slot-names t) ;; initial call via initialize-instance
-
-                          ;; FIXME: value of slot-names being passed in
-                          ;;        doesn't seem to be correct, not
-                          ;;        including slots with new initforms ?
-                          
-                          ;; (member (slot-definition-name slotd)
-                          ;;         slot-names
-                          ;;         :test #'eq)
-                          )
+                ((and (or (eq slot-names t) ;; initial call via initialize-instance
+                          (member (slot-definition-name slotd)
+                                  slot-names
+                                  :test #'eq))
                       (not (slot-boundp-using-class class instance slotd)))
                  ;; If the slot name is among the specified slot names, or
                  ;; we're reinitializing all slots, and the slot is currently

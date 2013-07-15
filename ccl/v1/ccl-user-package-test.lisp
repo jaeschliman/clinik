@@ -14,10 +14,10 @@
 (assert (null (slot-boundp *a* 'a)))
 
 (defclass a (user-package)
-  ((a :initform 42) b)
+  (a b (c :initform 42))
   (:metaclass user-package-class))
 
 (assert (null (slot-boundp *a* 'b)))
 
-(assert (= 42 (slot-value *a* 'a)))
+(assert (= 42 (slot-value *a* 'c)))
 
